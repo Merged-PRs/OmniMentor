@@ -4,14 +4,14 @@ This turns OmniMentor into a **named, persistent GPT** you pick from your sideba
 
 ## Why this is split into two parts
 
-ChatGPT's custom-GPT **Instructions** box has a character cap (**8,000 characters** as of early 2025). The full OmniMentor spec is **17,370 characters**, so it doesn't fit. The fix keeps full fidelity:
+ChatGPT's custom-GPT **Instructions** box has a character cap (**8,000 characters** as of early 2025). The full OmniMentor spec is several times larger than that cap, so it doesn't fit. The fix keeps full fidelity:
 
-| Part | What goes there | File | Size |
-|---|---|---|---|
-| **Instructions field** | A self-sufficient compact operating brief — runs OmniMentor on its own | `chatgpt/instructions.txt` | 6,956 chars ✓ fits |
-| **Knowledge file** | The full spec (resolution order, carve-outs, psychological basis) for depth | `core/omnimentor-core.md` | 17,370 chars |
+| Part | What goes there | File |
+|---|---|---|
+| **Instructions field** | A self-sufficient compact operating brief — runs OmniMentor on its own, under the cap | `chatgpt/instructions.txt` |
+| **Knowledge file** | The full spec (resolution order, carve-outs, psychological basis) for depth | `core/omnimentor-core.md` |
 
-The brief already contains every always-on rule, all 18 commands, all 5 modes, and the timeline structure — so the GPT behaves correctly even before it consults the knowledge file. The knowledge file is the reference of record for the fine detail.
+The brief already contains every always-on rule, all 20 commands, all 5 modes, the timeline structure, and the learner-profile/spaced-review rules — so the GPT behaves correctly even before it consults the knowledge file. The knowledge file is the reference of record for the fine detail.
 
 > **If OpenAI has raised the Instructions cap since early 2025** (the editor shows a live character counter): skip the brief and paste the entire `core/omnimentor-core.md` straight into Instructions instead. Highest fidelity, one fewer moving part. Still attach `core/omnimentor-core.md` as a knowledge file as a backstop.
 
@@ -39,10 +39,13 @@ A practical-first learning coach. Learn any skill by doing — coding, DSA, syst
 /learn React hooks
 /timeline System Design in 3 months
 /dsa sliding window
+/mock backend interview
 Teach me Python from scratch — I have about 1 hour a day
 ```
 
 **Knowledge** — upload `core/omnimentor-core.md`.
+
+> **Memory caveat:** a Custom GPT has no file system, so the learner profile can't persist by itself. It will ask you to paste your profile when you start a new chat, and print an updated one to save. Copy it into a ChatGPT Project file or a note if you want continuity. Claude Code handles this automatically (see the README).
 
 ---
 
@@ -82,6 +85,6 @@ Teach me Python from scratch — I have about 1 hour a day
 
 `core/omnimentor-core.md` is the **single source of truth**. When you change behavior:
 
-1. **Always** re-upload `core/omnimentor-core.md` as the GPT's knowledge file, **and** re-sync the Claude skill from the same core.
-2. If the change touches an **always-on rule, a mode, or a command**, also update the compact brief (`chatgpt/instructions.txt`) and re-paste it into Instructions.
-3. **Detail-only** changes (e.g. the First-Message Resolution Order or a carve-out) need only the knowledge re-upload — the brief points to the file for those.
+1. Run `powershell -File scripts/sync.ps1` — regenerates the Claude skill and warns if this brief breaks the 8,000-char cap or its command list drifts from the core.
+2. **Always** re-upload `core/omnimentor-core.md` as the GPT's knowledge file.
+3. If the change touches an **always-on rule, a mode, or a command**, also update `chatgpt/instructions.txt` and re-paste it into Instructions.
