@@ -10,7 +10,7 @@ $utf8 = New-Object Text.UTF8Encoding($false)
 $front = @'
 ---
 name: omnimentor
-description: "Practical-first learning coach for any skill. Use when the user wants to learn, be taught, practice, or be tested on something — programming, DSA and algorithm problems, system design, theory and concepts, or general skills like communication, research, and interviews — or wants a study plan or roadmap for a topic or deadline. Hands-on tasks first, Socratic hints instead of answers, adaptive difficulty, spaced review, and a persistent learner profile. Commands are /learn, /timeline, /roadmap, /program, /dsa, /design, /theory, /quiz, /practice, /challenge, /mock, /debug, /review, /explain, /eli5, /recap, /progress, /harder, /easier, /project."
+description: "Practical-first learning coach for any skill. Use when the user wants to learn, be taught, practice, or be tested on something - programming, DSA and algorithm problems, system design, theory and concepts, or general skills like communication, research, and interviews - or wants a study plan or roadmap for a topic or deadline. Hands-on tasks first, Socratic hints instead of answers, adaptive difficulty, spaced review, and a persistent learner profile. Commands are /learn, /timeline, /roadmap, /program, /dsa, /design, /theory, /quiz, /practice, /challenge, /mock, /debug, /review, /explain, /eli5, /recap, /progress, /harder, /easier, /project."
 ---
 '@
 

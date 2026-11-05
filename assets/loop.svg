@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="260" viewBox="0 0 1200 260" fill="none" role="img" aria-labelledby="loopTitle loopDesc">
+  <title id="loopTitle">The OmniMentor learning loop</title>
+  <desc id="loopDesc">Attempt, hint, feedback, spaced review. Difficulty adapts to evidence, not the calendar.</desc>
+
+  <defs>
+    <linearGradient id="loopBg" x1="0" y1="0" x2="1200" y2="260" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B0E14"/>
+      <stop offset="1" stop-color="#0E1622"/>
+    </linearGradient>
+    <pattern id="loopGrid" width="26" height="26" patternUnits="userSpaceOnUse">
+      <path d="M26 0H0V26" stroke="#131C28" stroke-width="1"/>
+    </pattern>
+    <marker id="loopArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10Z" fill="#3B4A5E"/>
+    </marker>
+    <clipPath id="loopCard">
+      <rect x="1" y="1" width="1198" height="258" rx="20"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#loopCard)">
+    <rect width="1200" height="260" fill="url(#loopBg)"/>
+    <rect width="1200" height="260" fill="url(#loopGrid)" opacity="0.4"/>
+
+    <text x="48" y="44" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="3.2" fill="#5EEAD4">THE LEARNING LOOP</text>
+
+    <rect x="48" y="70" width="240" height="100" rx="12" fill="#0F141C" stroke="#5EEAD4" stroke-opacity="0.25" stroke-width="1.5">
+      <animate attributeName="stroke-opacity" values="0.18;0.7;0.18" keyTimes="0;0.5;1" dur="8s" begin="0s" repeatCount="indefinite"/>
+    </rect>
+    <text x="68" y="102" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="2" fill="#5EEAD4">01</text>
+    <text x="68" y="132" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="17" font-weight="600" letter-spacing="0.6" fill="#E2E8F0">ATTEMPT</text>
+    <text x="68" y="154" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="11.5" fill="#7C8AA0">you do it before being told</text>
+
+    <rect x="336" y="70" width="240" height="100" rx="12" fill="#0F141C" stroke="#5EEAD4" stroke-opacity="0.25" stroke-width="1.5">
+      <animate attributeName="stroke-opacity" values="0.18;0.7;0.18" keyTimes="0;0.5;1" dur="8s" begin="2s" repeatCount="indefinite"/>
+    </rect>
+    <text x="356" y="102" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="2" fill="#5EEAD4">02</text>
+    <text x="356" y="132" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="17" font-weight="600" letter-spacing="0.6" fill="#E2E8F0">HINT</text>
+    <text x="356" y="154" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="11.5" fill="#7C8AA0">the smallest useful nudge</text>
+
+    <rect x="624" y="70" width="240" height="100" rx="12" fill="#0F141C" stroke="#5EEAD4" stroke-opacity="0.25" stroke-width="1.5">
+      <animate attributeName="stroke-opacity" values="0.18;0.7;0.18" keyTimes="0;0.5;1" dur="8s" begin="4s" repeatCount="indefinite"/>
+    </rect>
+    <text x="644" y="102" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="2" fill="#5EEAD4">03</text>
+    <text x="644" y="132" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="17" font-weight="600" letter-spacing="0.6" fill="#E2E8F0">FEEDBACK</text>
+    <text x="644" y="154" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="11.5" fill="#7C8AA0">specific, never generic praise</text>
+
+    <rect x="912" y="70" width="240" height="100" rx="12" fill="#0F141C" stroke="#5EEAD4" stroke-opacity="0.25" stroke-width="1.5">
+      <animate attributeName="stroke-opacity" values="0.18;0.7;0.18" keyTimes="0;0.5;1" dur="8s" begin="6s" repeatCount="indefinite"/>
+    </rect>
+    <text x="932" y="102" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="2" fill="#5EEAD4">04</text>
+    <text x="932" y="132" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="17" font-weight="600" letter-spacing="0.6" fill="#E2E8F0">REVIEW</text>
+    <text x="932" y="154" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="11.5" fill="#7C8AA0">1 / 3 / 7 / 21 / 60 days</text>
+
+    <path d="M294 120H330" stroke="#334155" stroke-width="1.8" stroke-dasharray="4 6" marker-end="url(#loopArrow)">
+      <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="1s" repeatCount="indefinite"/>
+    </path>
+    <path d="M582 120H618" stroke="#334155" stroke-width="1.8" stroke-dasharray="4 6" marker-end="url(#loopArrow)">
+      <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="1s" repeatCount="indefinite"/>
+    </path>
+    <path d="M870 120H906" stroke="#334155" stroke-width="1.8" stroke-dasharray="4 6" marker-end="url(#loopArrow)">
+      <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="1s" repeatCount="indefinite"/>
+    </path>
+
+    <text x="600" y="216" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="1.2" fill="#64748B">DIFFICULTY ADAPTS TO EVIDENCE, NOT THE CALENDAR</text>
+  </g>
+
+  <rect x="1" y="1" width="1198" height="258" rx="20" stroke="#1E293B" stroke-width="2"/>
+</svg>

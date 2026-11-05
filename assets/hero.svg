@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="340" viewBox="0 0 1200 340" fill="none" role="img" aria-labelledby="heroTitle heroDesc">
+  <title id="heroTitle">OmniMentor</title>
+  <desc id="heroDesc">One mentor. Every skill. An adaptive learning coach for Claude Code, ChatGPT and OpenCode.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="340" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B0E14"/>
+      <stop offset="1" stop-color="#0E1622"/>
+    </linearGradient>
+    <linearGradient id="word" x1="68" y1="150" x2="540" y2="196" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#99F6E4"/>
+    </linearGradient>
+    <pattern id="grid" width="26" height="26" patternUnits="userSpaceOnUse">
+      <path d="M26 0H0V26" stroke="#16202E" stroke-width="1"/>
+    </pattern>
+    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="72"/>
+    </filter>
+    <clipPath id="card">
+      <rect x="1" y="1" width="1198" height="338" rx="20"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#card)">
+    <rect width="1200" height="340" fill="url(#bg)"/>
+    <rect width="1200" height="340" fill="url(#grid)" opacity="0.45"/>
+
+    <circle cx="220" cy="60" r="210" fill="#0D9488" opacity="0.20" filter="url(#soft)">
+      <animate attributeName="cx" values="220;300;220" dur="18s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="60;96;60" dur="18s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="980" cy="300" r="220" fill="#4F46E5" opacity="0.16" filter="url(#soft)">
+      <animate attributeName="cy" values="300;236;300" dur="22s" repeatCount="indefinite"/>
+    </circle>
+
+    <rect x="648" y="64" width="488" height="212" rx="14" fill="#0F141C" stroke="#263041" stroke-width="1.5"/>
+
+    <circle cx="672" cy="84" r="3.5" fill="#334155"/>
+    <circle cx="685" cy="84" r="3.5" fill="#334155"/>
+    <circle cx="698" cy="84" r="3.5" fill="#334155"/>
+    <text x="716" y="88" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#64748B">omnimentor / zsh</text>
+    <path d="M648 104H1136" stroke="#1E293B" stroke-width="1"/>
+
+    <text x="676" y="136" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5" fill="#5EEAD4">$</text>
+    <text x="694" y="136" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5" fill="#E2E8F0">/learn rust</text>
+    <rect x="796" y="121" width="8" height="17" rx="1" fill="#5EEAD4">
+      <animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.5;0.51;1" dur="1.1s" repeatCount="indefinite"/>
+    </rect>
+
+    <text x="676" y="162" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#7C8AA0">&gt; tiny buildable task, not a syntax lecture</text>
+
+    <path d="M668 180H1116" stroke="#16202E" stroke-width="1"/>
+
+    <text x="676" y="204" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" letter-spacing="2.2" fill="#475569">TRY</text>
+
+    <text x="676" y="228" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#5EEAD4">&gt;</text>
+
+    <text x="692" y="228" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#CBD5E1">/dsa two sum
+      <animate attributeName="opacity" values="1;1;0" keyTimes="0;0.24;0.25" dur="16s" begin="0s" repeatCount="indefinite"/>
+    </text>
+    <text x="692" y="228" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#CBD5E1" opacity="0">/timeline ai 6 months
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.01;0.24;0.25" dur="16s" begin="4s" repeatCount="indefinite"/>
+    </text>
+    <text x="692" y="228" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#CBD5E1" opacity="0">/progress
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.01;0.24;0.25" dur="16s" begin="8s" repeatCount="indefinite"/>
+    </text>
+    <text x="692" y="228" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#CBD5E1" opacity="0">/mock backend
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.01;0.24;0.25" dur="16s" begin="12s" repeatCount="indefinite"/>
+    </text>
+
+    <text x="676" y="258" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" letter-spacing="0.6" fill="#475569">Claude Code / ChatGPT / OpenCode</text>
+  </g>
+
+  <rect x="1" y="1" width="1198" height="338" rx="20" stroke="#1E293B" stroke-width="2"/>
+
+  <text x="68" y="118" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" letter-spacing="3.4" fill="#5EEAD4">ADAPTIVE LEARNING ENGINE</text>
+  <text x="66" y="198" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="68" font-weight="700" letter-spacing="4" fill="url(#word)">OMNIMENTOR</text>
+  <text x="68" y="238" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="17" fill="#94A3B8">One mentor. Every skill. Built to make you capable.</text>
+  <text x="68" y="292" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" letter-spacing="1.4" fill="#64748B">PROGRAMMING / DSA / SYSTEM DESIGN / THEORY / GENERAL</text>
+</svg>
