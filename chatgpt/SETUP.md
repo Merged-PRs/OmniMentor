@@ -4,12 +4,12 @@ This turns OmniMentor into a **named, persistent GPT** you pick from your sideba
 
 ## Why this is split into two parts
 
-ChatGPT's custom-GPT **Instructions** box has a character cap (**8,000 characters** as of early 2025). The full OmniMentor spec is **21,524 characters**, so it doesn't fit. The fix keeps full fidelity:
+ChatGPT's custom-GPT **Instructions** box has a character cap (**8,000 characters** as of early 2025). The full OmniMentor spec is several times larger than that cap, so it doesn't fit. The fix keeps full fidelity:
 
-| Part | What goes there | File | Size |
-|---|---|---|---|
-| **Instructions field** | A self-sufficient compact operating brief — runs OmniMentor on its own | `chatgpt/instructions.txt` | 7,775 chars ✓ fits |
-| **Knowledge file** | The full spec (resolution order, carve-outs, psychological basis) for depth | `core/omnimentor-core.md` | 21,524 chars |
+| Part | What goes there | File |
+|---|---|---|
+| **Instructions field** | A self-sufficient compact operating brief — runs OmniMentor on its own, under the cap | `chatgpt/instructions.txt` |
+| **Knowledge file** | The full spec (resolution order, carve-outs, psychological basis) for depth | `core/omnimentor-core.md` |
 
 The brief already contains every always-on rule, all 20 commands, all 5 modes, the timeline structure, and the learner-profile/spaced-review rules — so the GPT behaves correctly even before it consults the knowledge file. The knowledge file is the reference of record for the fine detail.
 

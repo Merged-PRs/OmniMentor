@@ -22,10 +22,11 @@ OmniMentor/
 │       └── omnimentor/
 │           └── SKILL.md            # Claude Code skill — generated from the core, committed
 ├── chatgpt/
-│   ├── instructions.txt            # compact brief for the GPT "Instructions" box (7,775 chars)
+│   ├── instructions.txt            # compact brief for the GPT "Instructions" box (under the cap)
 │   └── SETUP.md                    # step-by-step Custom GPT build guide
 └── scripts/
-    └── sync.ps1                    # regenerates SKILL.md from the core + checks the 8k cap
+    ├── sync.ps1                    # regenerates SKILL.md from the core + checks the 8k cap
+    └── check-progress.ps1          # validates a learner profile (duplicates, mastery, schedule)
 ```
 
 ## Install — Claude Code
@@ -62,7 +63,7 @@ Full walkthrough in [`chatgpt/SETUP.md`](chatgpt/SETUP.md). Short version:
 3. Upload `core/omnimentor-core.md` as a **Knowledge** file.
 4. Turn **Code Interpreter ON** (lets it actually run your code).
 
-The two-part split exists because ChatGPT caps the Instructions box at ~8,000 characters while the full core is 21,524 — the brief runs OmniMentor on its own, and the knowledge file supplies the fine detail. If your editor accepts a larger paste, drop the full core straight into Instructions instead.
+The two-part split exists because ChatGPT caps the Instructions box at ~8,000 characters while the full core is several times larger — the brief runs OmniMentor on its own, and the knowledge file supplies the fine detail. `scripts/sync.ps1` fails loudly if the brief ever crosses the cap. If your editor accepts a larger paste, drop the full core straight into Instructions instead.
 
 ## Commands
 
@@ -80,17 +81,29 @@ Full behavior for each is defined in [`core/omnimentor-core.md`](core/omnimentor
 
 ## Memory: the learner profile
 
-In hosts with file access (Claude Code), OmniMentor keeps a progress ledger at **`.omnimentor/progress.md`** in the current project:
+In hosts with file access (Claude Code), OmniMentor keeps a progress ledger at **`.omnimentor/progress.md`** in the current project. It has three sections: **Active plan** (goal, current phase, milestone due, dated adjustment log), **Last session** (date + the exact next action), and **Mastery**:
 
-| Topic | Subtopic / pattern | Status | Last evidence | Next review | Gap notes |
-|---|---|---|---|---|---|
-| DSA | sliding window | weak | 2026-11-06 | 2026-11-07 | off-by-one on window shrink |
+| Topic | Subtopic / pattern | Status | Proof | Last evidence | Interval (days) | Next review | Gap notes |
+|---|---|---|---|---|---|---|---|
+| DSA | sliding window | learning | hinted | 2026-11-06 | 1 | 2026-11-07 | window shrink off-by-one |
 
-- Read at the start of each session, updated after every assessment.
-- Only **demonstrated application** earns `mastered` — never a topic merely "covered."
-- Review dates follow a spaced schedule (1 → 3 → 7 → 21 → 60 days; a miss resets to 1).
-- `/progress` shows it; `/recap` quizzes what's due plus past misses; `/timeline` uses it to place phases.
+- **`Proof`** separates knowing from copying: `independent` (no hint, no solution seen, can explain the key step), `hinted` (correct only after help), `solution` (answer revealed, copied, or can't explain it).
+- **Only `independent` earns `mastered` and advances the interval** (1 → 3 → 7 → 21 → 60 days, capped). A hint, a copied answer, or a miss resets the interval to 1 day and records the specific gap.
+- **One row per topic + subtopic.** Rows are keyed case-insensitively and merged if duplicates appear, so repeated assessments update the existing row instead of the file growing.
+- **Topics are a fixed namespace** (`Programming / <lang>`, `DSA`, `System Design`, `AI/ML`, `Theory`, `General Skill`), so Rust, DSA, and AI/ML stay calibrated independently.
+- **Written in the same reply as the assessment**, never at session end — a closed tab loses nothing that was already graded.
+- **On restart**, a fresh `independent` row (≤ 21 days) is trusted; stale or hinted rows get one diagnostic question. If `Last session` is ≤ 7 days old, the next session offers to resume that exact action.
+- `/progress` shows the plan, due reviews, and next action; `/recap` quizzes what's due plus past misses; `/timeline` uses the profile to place phases.
 - The folder is git-ignored — it's your personal data, not project config.
+
+Check a profile at any time:
+
+```bash
+powershell -File scripts/check-progress.ps1                 # validates .omnimentor/progress.md
+powershell -File scripts/check-progress.ps1 -SelfTest       # proves the validator itself works
+```
+
+It fails on duplicate keys, `mastered` without `independent` proof, an off-schedule interval, a broken `Next review = Last evidence + Interval`, an invalid topic, and a `weak` row with no gap note.
 
 In a plain chat or a Custom GPT there's no file system: paste your profile in, and ask for an updated one to save. Anything you claim is treated as a hypothesis and checked with a quick diagnostic — except for planning requests, where your stated level is used directly.
 
