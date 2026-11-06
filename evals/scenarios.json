@@ -1,0 +1,183 @@
+[
+  {
+    "id": "beginner",
+    "title": "Beginner, cold start, correct independent attempt",
+    "seedProfile": null,
+    "turns": [
+      "/learn Python dictionaries. Use this exact exercise: write word_count(text) returning {word: count} for a sentence. Split on whitespace only; do not lowercase or strip punctuation. Do not change the task or spec.",
+      "counts = {}\nfor w in \"the cat and the dog and the bird\".split():\n    counts[w] = counts.get(w, 0) + 1\nprint(counts)\n\nOutput: {'the': 2, 'cat': 1, 'and': 2, 'dog': 1, 'bird': 1}\nConfidence: 3. get starts a missing key at 0, then the increment is one line."
+    ],
+    "expect": {
+      "ledgerWritten": true,
+      "row": {
+        "topic": "Programming / Python",
+        "subtopic": "dictionaries",
+        "status": "learning",
+        "proof": "independent",
+        "confidence": 3,
+        "intervalAllowed": [1, 3],
+        "misconceptionContains": null
+      },
+      "note": "V3: independent pass keeps learning and advances the interval; mastery also needs explanation + transfer, which this turn does not provide."
+    },
+    "rubric": ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R10"]
+  },
+  {
+    "id": "advanced",
+    "title": "Advanced claim, task, explanation, transfer",
+    "seedProfile": null,
+    "turns": [
+      "/learn Python decorators. I have used Python for years, so skip the basics. Use this exact task: write a logged decorator that prints the function name and preserves metadata. Do not change the task.",
+      "import functools\ndef logged(fn):\n    @functools.wraps(fn)\n    def wrapper(*args, **kwargs):\n        print(fn.__name__)\n        return fn(*args, **kwargs)\n    return wrapper\n\nConfidence: 4. wrapper closes over fn and functools.wraps copies __name__ and __doc__.",
+      "If I drop functools.wraps, the decorated function's __name__ becomes 'wrapper' and its docstring is lost. The call still works, but introspection and some frameworks break.",
+      "`sorted(logged(f).__dict__)` -> `['__wrapped__']`. It points at the original function, and `inspect.signature` follows `__wrapped__` by default, so it reads the original parameter list. With `follow_wrapped=False` it shows the wrapper's own `(*args, **kwargs)`."
+    ],
+    "expect": {
+      "ledgerWritten": true,
+      "row": {
+        "topic": "Programming / Python",
+        "subtopic": "decorators",
+        "status": "mastered",
+        "proof": "independent",
+        "confidence": 4,
+        "intervalAllowed": [3, 7, 21],
+        "misconceptionContains": null
+      },
+      "note": "V3: mastery requires an independent pass plus explanation and an independent transfer pass."
+    },
+    "rubric": ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R10", "R11"]
+  },
+  {
+    "id": "copier",
+    "title": "Copied solution with no reasoning",
+    "seedProfile": null,
+    "turns": [
+      "/learn Python dictionaries. Use this exact exercise: write word_count(text) returning {word: count} for a sentence. Split on whitespace only; do not lowercase or strip punctuation. Do not change the task or spec.",
+      "from collections import Counter\n\ndef word_count(text):\n    return dict(Counter(text.split()))\n\nprint(word_count(\"a b a\"))\n\nConfidence: 5",
+      "I copied it from Stack Overflow. I do not know what Counter does internally."
+    ],
+    "expect": {
+      "ledgerWritten": true,
+      "row": {
+        "topic": "Programming / Python",
+        "subtopic": "dictionaries",
+        "status": "learning",
+        "proof": "solution",
+        "confidence": 5,
+        "intervalAllowed": [1],
+        "misconceptionContains": null,
+        "gapNotesNonEmpty": true
+      },
+      "note": "V3: no credit for a copied attempt, keep earlier evidence, interval 1, prerequisite check. No prior evidence exists here, so learning is the floor."
+    },
+    "rubric": ["R2", "R3", "R4", "R5", "R6", "R7", "R10"]
+  },
+  {
+    "id": "repeated-misconception",
+    "title": "Same KeyError twice on dict accumulation",
+    "seedProfile": null,
+    "turns": [
+      "/learn Python dictionaries. Use this exact exercise: write word_count(text) returning {word: count} for a sentence. Split on whitespace only; do not lowercase or strip punctuation. Do not change the task or spec.",
+      "counts = {}\nfor w in \"a b a\".split():\n    counts[w] += 1\nprint(counts)",
+      "counts = {}\nfor w in \"x y x\".split():\n    counts[w] += 1\nprint(counts)"
+    ],
+    "expect": {
+      "ledgerWritten": true,
+      "row": {
+        "topic": "Programming / Python",
+        "subtopic": "dictionaries",
+        "status": "learning",
+        "proof": "hinted",
+        "confidence": null,
+        "intervalAllowed": [1],
+        "misconceptionContains": "KeyError"
+      },
+      "note": "V3: the same misconception twice pauses progression, runs a targeted prerequisite repair, and retests. The row must record the misconception."
+    },
+    "rubric": ["R2", "R5", "R6", "R7", "R8", "R10"]
+  },
+  {
+    "id": "confident-wrong",
+    "title": "Confident but incorrect model of missing keys",
+    "seedProfile": null,
+    "turns": [
+      "/learn Python dictionaries. Use this exact exercise: write word_count(text) returning {word: count} for a sentence. Split on whitespace only; do not lowercase or strip punctuation. Do not change the task or spec.",
+      "counts[word] starts at 0 because a dict defaults missing keys to 0, so I do not need get or a membership check. Confidence: 5.",
+      "I ran it:\n\nTraceback (most recent call last):\n  File \"<stdin>\", line 2, in <module>\nKeyError: 'hi'\n\nSo the first word fails. After the key exists, `counts[w] += 1` is fine, so I still do not need get. Confidence: 5."
+    ],
+    "expect": {
+      "ledgerWritten": true,
+      "row": {
+        "topic": "Programming / Python",
+        "subtopic": "dictionaries",
+        "status": "weak",
+        "proof": "hinted",
+        "confidence": 5,
+        "intervalAllowed": [1],
+        "misconceptionContains": "KeyError"
+      },
+      "note": "V3: confident and wrong is top priority; correct the model, record the misconception, no progression."
+    },
+    "rubric": ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R10"]
+  },
+  {
+    "id": "correct-uncertain",
+    "title": "Correct answer, low confidence",
+    "seedProfile": null,
+    "turns": [
+      "/learn Python dictionaries. Use this exact exercise: write word_count(text) returning {word: count} for a sentence. Split on whitespace only; do not lowercase or strip punctuation. Do not change the task or spec.",
+      "counts = {}\nfor w in \"a b a\".split():\n    counts[w] = counts.get(w, 0) + 1\nprint(counts)\n\nOutput: {'a': 2, 'b': 1}\nConfidence: 2. I guessed the get default."
+    ],
+    "expect": {
+      "ledgerWritten": true,
+      "row": {
+        "topic": "Programming / Python",
+        "subtopic": "dictionaries",
+        "status": "learning",
+        "proof": "independent",
+        "confidence": 2,
+        "intervalAllowed": [1, 3],
+        "misconceptionContains": null
+      },
+      "note": "V3: record confidence, never promote on correctness alone, get one more independent item."
+    },
+    "rubric": ["R3", "R4", "R5", "R6", "R7", "R10"]
+  },
+  {
+    "id": "returning-learner",
+    "title": "Returning learner with a fresh profile and due reviews",
+    "seedProfile": "# OmniMentor Progress\n\n## 1. Active plan\n\n| Goal | Started | Current phase | Milestone due | Adjustments |\n|---|---|---|---|---|\n| Backend interviews | 2026-10-01 | 2/4 Systems | 2026-11-20 | |\n\n## 2. Last session\n\n- 2026-11-04 - DSA / sliding window - next: solve 2 window-shrink edge cases\n\n## 3. Mastery\n\n| Topic | Subtopic / pattern | Status | Proof | Last evidence | Interval (days) | Next review | Gap notes |\n|---|---|---|---|---|---|---|---|\n| DSA | sliding window | learning | hinted | 2026-11-04 | 1 | 2026-11-05 | off-by-one on shrink |\n| System Design | rate limiting | learning | independent | 2026-10-30 | 7 | 2026-11-06 | |\n",
+    "turns": [
+      "I am back. What is due today? Start with the DSA item if it is overdue.",
+      "def shortest(nums, target):\n    left = 0\n    total = 0\n    best = float('inf')\n    for right, n in enumerate(nums):\n        total += n\n        while total >= target:\n            best = min(best, right - left + 1)\n            total -= nums[left]\n            left += 1\n    return 0 if best == float('inf') else best\n\nprint(shortest([2,3,1,2,4,3], 7))\n\nOutput: 2\nConfidence: 3. The window shrinks while the sum is still >= target."
+    ],
+    "expect": {
+      "ledgerWritten": true,
+      "row": {
+        "topic": "DSA",
+        "subtopic": "sliding window",
+        "status": "learning",
+        "proof": "independent",
+        "confidence": 3,
+        "intervalAllowed": [1, 3],
+        "misconceptionContains": null
+      },
+      "note": "V3: a fresh profile skips the 2-3 question diagnostic, the due skill is chosen, and the existing DSA row is updated in place (no duplicate)."
+    },
+    "rubric": ["R1", "R3", "R10", "R11"]
+  },
+  {
+    "id": "transactional",
+    "title": "Transactional syntax question mid-session",
+    "seedProfile": "# OmniMentor Progress\n\n## 1. Active plan\n\n(no active plan)\n\n## 2. Last session\n\n- 2026-11-05 - Programming / Python - next: dict word count\n\n## 3. Mastery\n\n| Topic | Subtopic / pattern | Status | Proof | Last evidence | Interval (days) | Next review | Gap notes |\n|---|---|---|---|---|---|---|---|\n| Programming / Python | dictionaries | learning | hinted | 2026-11-05 | 1 | 2026-11-06 | get default |\n",
+    "turns": [
+      "what's the syntax for a Python list comprehension?"
+    ],
+    "expect": {
+      "ledgerWritten": false,
+      "row": null,
+      "note": "Transactional: direct complete answer, no quiz, no next action, no ledger write."
+    },
+    "rubric": ["R9"]
+  }
+]
