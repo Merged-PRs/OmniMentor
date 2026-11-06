@@ -21,8 +21,9 @@ $skill = $front.TrimEnd() + "`n`n" + $core.TrimEnd() + "`n"
 
 # --- checks ---
 $brief = [IO.File]::ReadAllText($briefPath, $utf8)
-$coreCmds = ([regex]::Matches($core, '(?m)^\| `/[a-z]+')).Count
-$briefCmds = ([regex]::Matches($brief, '(?m)^- /[a-z]+')).Count
+$commandSet = @('/learn','/timeline','/roadmap','/program','/dsa','/design','/theory','/quiz','/practice','/challenge','/mock','/debug','/review','/explain','/eli5','/recap','/progress','/harder','/easier','/project')
+$coreCmds = @($commandSet | Where-Object { $core -match ([regex]::Escape($_) + '(?![a-z0-9])') }).Count
+$briefCmds = @($commandSet | Where-Object { $brief -match ([regex]::Escape($_) + '(?![a-z0-9])') }).Count
 
 Write-Host "SKILL.md written      : $($skill.Length) chars"
 Write-Host "core                  : $($core.Length) chars, $coreCmds commands"

@@ -10,7 +10,8 @@ $validStatus = @('mastered', 'learning', 'weak')
 $validProof = @('independent', 'hinted', 'solution')
 $validInterval = @(1, 3, 7, 21, 60)
 $validTopic = @('DSA', 'System Design', 'AI/ML', 'Theory', 'General Skill')
-$required = @('Topic', 'Subtopic / pattern', 'Status', 'Proof', 'Last evidence', 'Interval (days)', 'Next review', 'Gap notes')
+$baseColumns = @('Topic', 'Subtopic / pattern', 'Status', 'Proof', 'Last evidence', 'Interval (days)', 'Next review', 'Gap notes')
+$optionalColumns = @('Prereq', 'Confidence', 'Misconception')
 
 function Get-ProfileErrors([string]$file) {
     $errors = New-Object System.Collections.Generic.List[string]
@@ -24,10 +25,18 @@ function Get-ProfileErrors([string]$file) {
     if ($hdr -lt 0) { $errors.Add('No Mastery table header (| Topic | ...) found.'); return $errors }
 
     $cols = @(($lines[$hdr].Trim().Trim('|') -split '\|') | ForEach-Object { $_.Trim() })
-    foreach ($need in $required) {
-        if ($cols -notcontains $need) { $errors.Add("Header is missing column: $need") }
+    $expected = if ($cols.Count -eq 8) { $baseColumns } elseif ($cols.Count -eq 11) { $baseColumns + $optionalColumns } else { $null }
+    if (-not $expected) {
+        $errors.Add("Mastery header must have 8 or 11 columns, found $($cols.Count).")
+        return $errors
     }
-    if ($errors.Count -gt 0) { return $errors }
+    if (($cols -join '|') -ne ($expected -join '|')) {
+        $errors.Add("Mastery header columns must be exactly: $($expected -join ' | ')")
+        return $errors
+    }
+
+    $idx = @{}
+    for ($j = 0; $j -lt $cols.Count; $j++) { $idx[$cols[$j]] = $j }
 
     $seen = @{}
     $rows = 0
@@ -37,33 +46,48 @@ function Get-ProfileErrors([string]$file) {
         $c = @(($line.Trim().Trim('|') -split '\|') | ForEach-Object { $_.Trim() })
         $rows++
         $where = "row $rows ($($c[0]) / $($c[1]))"
-        if ($c.Count -ne 8) { $errors.Add("$where has $($c.Count) columns, expected 8"); continue }
+        if ($c.Count -ne $cols.Count) { $errors.Add("$where has $($c.Count) columns, expected $($cols.Count)"); continue }
 
-        $key = (("$($c[0]) / $($c[1])").ToLower() -replace '\s+', ' ').Trim()
+        $key = (("$($c[$idx['Topic']]) / $($c[$idx['Subtopic / pattern']])").ToLower() -replace '\s+', ' ').Trim()
         if ($seen.ContainsKey($key)) { $errors.Add("Duplicate key '$key' at $where - merge into one row") } else { $seen[$key] = $true }
 
-        $topicOk = $validTopic -contains $c[0] -or ($c[0] -match '^Programming / \S')
-        if (-not $topicOk) { $errors.Add("$where has invalid Topic '$($c[0])' - use Programming / <lang>, DSA, System Design, AI/ML, Theory, or General Skill") }
+        $topic = $c[$idx['Topic']]
+        $topicOk = $validTopic -contains $topic -or ($topic -match '^Programming / \S')
+        if (-not $topicOk) { $errors.Add("$where has invalid Topic '$topic' - use Programming / <lang>, DSA, System Design, AI/ML, Theory, or General Skill") }
 
-        if ($validStatus -notcontains $c[2]) { $errors.Add("$where has invalid Status '$($c[2])'") }
-        if ($validProof -notcontains $c[3]) { $errors.Add("$where has invalid Proof '$($c[3])'") }
-        if ($c[2] -eq 'mastered' -and $c[3] -ne 'independent') { $errors.Add("$where is mastered with proof '$($c[3])' - only independent earns mastery") }
-        if ($c[2] -eq 'weak' -and [string]::IsNullOrWhiteSpace($c[7])) { $errors.Add("$where is weak with no gap note") }
+        $status = $c[$idx['Status']]
+        $proof = $c[$idx['Proof']]
+        if ($validStatus -notcontains $status) { $errors.Add("$where has invalid Status '$status'") }
+        if ($validProof -notcontains $proof) { $errors.Add("$where has invalid Proof '$proof'") }
+        if ($status -eq 'mastered' -and $proof -ne 'independent') { $errors.Add("$where is mastered with proof '$proof' - only independent earns mastery") }
+        if ($status -eq 'weak' -and [string]::IsNullOrWhiteSpace($c[$idx['Gap notes']])) { $errors.Add("$where is weak with no gap note") }
+
+        if ($cols.Count -eq 11) {
+            $confidence = $c[$idx['Confidence']]
+            if ($confidence -ne '' -and $confidence -notmatch '^[1-5]$') { $errors.Add("$where has invalid Confidence '$confidence' - use 1-5 or leave empty") }
+            foreach ($opt in 'Prereq', 'Misconception') {
+                $value = $c[$idx[$opt]]
+                if ($value -ne '') {
+                    $parts = @($value -split ';' | ForEach-Object { $_.Trim() })
+                    if ($parts -contains '') { $errors.Add("$where has an empty ;-separated value in $opt") }
+                }
+            }
+        }
 
         $interval = 0
-        if (-not [int]::TryParse($c[5], [ref]$interval) -or $validInterval -notcontains $interval) {
-            $errors.Add("$where has invalid Interval '$($c[5])' - must be 1, 3, 7, 21, or 60")
+        if (-not [int]::TryParse($c[$idx['Interval (days)']], [ref]$interval) -or $validInterval -notcontains $interval) {
+            $errors.Add("$where has invalid Interval '$($c[$idx['Interval (days)']])' - must be 1, 3, 7, 21, or 60")
         }
 
         $last = [datetime]::MinValue
         $next = [datetime]::MinValue
-        $lastOk = [datetime]::TryParseExact($c[4], 'yyyy-MM-dd', $null, 'None', [ref]$last)
-        $nextOk = [datetime]::TryParseExact($c[6], 'yyyy-MM-dd', $null, 'None', [ref]$next)
-        if (-not $lastOk) { $errors.Add("$where has invalid Last evidence '$($c[4])' - use yyyy-MM-dd") }
-        if (-not $nextOk) { $errors.Add("$where has invalid Next review '$($c[6])' - use yyyy-MM-dd") }
+        $lastOk = [datetime]::TryParseExact($c[$idx['Last evidence']], 'yyyy-MM-dd', $null, 'None', [ref]$last)
+        $nextOk = [datetime]::TryParseExact($c[$idx['Next review']], 'yyyy-MM-dd', $null, 'None', [ref]$next)
+        if (-not $lastOk) { $errors.Add("$where has invalid Last evidence '$($c[$idx['Last evidence']])' - use yyyy-MM-dd") }
+        if (-not $nextOk) { $errors.Add("$where has invalid Next review '$($c[$idx['Next review']])' - use yyyy-MM-dd") }
         if ($lastOk -and $nextOk -and $validInterval -contains $interval) {
-            $expected = $last.AddDays($interval).ToString('yyyy-MM-dd')
-            if ($next.ToString('yyyy-MM-dd') -ne $expected) { $errors.Add("$where breaks Next review = Last evidence + Interval (expected $expected)") }
+            $expectedNext = $last.AddDays($interval).ToString('yyyy-MM-dd')
+            if ($next.ToString('yyyy-MM-dd') -ne $expectedNext) { $errors.Add("$where breaks Next review = Last evidence + Interval (expected $expectedNext)") }
         }
     }
     if ($rows -eq 0) { $errors.Add('Mastery table has no rows.') }
@@ -80,30 +104,60 @@ function Show([string]$file) {
 }
 
 if ($SelfTest) {
-    $tmp = Join-Path ([IO.Path]::GetTempPath()) "omnimentor-selftest-$PID.md"
-    $good = @'
+    $dir = Join-Path ([IO.Path]::GetTempPath()) "omnimentor-selftest-$PID"
+    New-Item -ItemType Directory -Force $dir | Out-Null
+    $p8 = Join-Path $dir 'good8.md'
+    $p11 = Join-Path $dir 'good11.md'
+    $pb = Join-Path $dir 'bad11.md'
+    $pm = Join-Path $dir 'mixed.md'
+
+    $good8 = @'
+## Mastery
 | Topic | Subtopic / pattern | Status | Proof | Last evidence | Interval (days) | Next review | Gap notes |
 |---|---|---|---|---|---|---|---|
 | DSA | sliding window | learning | hinted | 2026-11-06 | 1 | 2026-11-07 | window shrink off-by-one |
 | Programming / Rust | ownership | mastered | independent | 2026-11-01 | 7 | 2026-11-08 | |
 '@
-    $bad = @'
-| Topic | Subtopic / pattern | Status | Proof | Last evidence | Interval (days) | Next review | Gap notes |
-|---|---|---|---|---|---|---|---|
-| DSA | sliding window | mastered | hinted | 2026-11-06 | 1 | 2026-11-07 | |
-| DSA | Sliding  Window | weak | independent | 2026-11-06 | 5 | 2026-11-20 | |
-| Rust | ownership | learning | independent | 2026-11-01 | 3 | 2026-11-04 | |
+
+    $good11 = @'
+## Mastery
+| Topic | Subtopic / pattern | Status | Proof | Last evidence | Interval (days) | Next review | Gap notes | Prereq | Confidence | Misconception |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Programming / Rust | ownership | mastered | independent | 2026-11-01 | 7 | 2026-11-08 | | | 4 | |
+| DSA | sliding window | learning | hinted | 2026-11-06 | 1 | 2026-11-07 | window shrink off-by-one | arrays; hashing | | |
 '@
-    [IO.File]::WriteAllText($tmp, "## Mastery`n$good", $utf8)
-    $goodErrors = (Get-ProfileErrors $tmp).Count
-    [IO.File]::WriteAllText($tmp, "## Mastery`n$bad", $utf8)
-    $badErrors = (Get-ProfileErrors $tmp).Count
-    Remove-Item $tmp -Force
-    if ($goodErrors -eq 0 -and $badErrors -ge 5) {
-        Write-Host "SELFTEST PASS: good profile clean, bad profile caught $badErrors problems" -ForegroundColor Green
+
+    $bad11 = @'
+## Mastery
+| Topic | Subtopic / pattern | Status | Proof | Last evidence | Interval (days) | Next review | Gap notes | Prereq | Confidence | Misconception |
+|---|---|---|---|---|---|---|---|---|---|---|
+| DSA | sliding window | mastered | hinted | 2026-11-06 | 1 | 2026-11-07 | | | 6 | index as key |
+| DSA | Sliding  Window | weak | independent | 2026-11-06 | 5 | 2026-11-20 | | | | |
+| Rust | ownership | learning | independent | 2026-11-01 | 3 | 2026-11-04 | | | | |
+'@
+
+    $mixed = @'
+## Mastery
+| Topic | Subtopic / pattern | Status | Proof | Last evidence | Interval (days) | Next review | Gap notes | Prereq |
+|---|---|---|---|---|---|---|---|---|
+| DSA | sliding window | learning | hinted | 2026-11-06 | 1 | 2026-11-07 | | arrays |
+'@
+
+    [IO.File]::WriteAllText($p8, $good8, $utf8)
+    [IO.File]::WriteAllText($p11, $good11, $utf8)
+    [IO.File]::WriteAllText($pb, $bad11, $utf8)
+    [IO.File]::WriteAllText($pm, $mixed, $utf8)
+    $e8 = (Get-ProfileErrors $p8).Count
+    $e11 = (Get-ProfileErrors $p11).Count
+    $eb = (Get-ProfileErrors $pb).Count
+    $em = (Get-ProfileErrors $pm).Count
+    Remove-Item $dir -Recurse -Force
+
+    if ($e8 -eq 0 -and $e11 -eq 0 -and $eb -ge 6 -and $em -ge 1) {
+        Write-Host "SELFTEST PASS: 8-col clean; 11-col clean incl. missing confidence; bad 11-col caught $eb; mixed header rejected" -ForegroundColor Green
         exit 0
     }
-    Write-Host "SELFTEST FAIL: good=$goodErrors (want 0), bad=$badErrors (want >=5)" -ForegroundColor Red
+    Write-Host "SELFTEST FAIL: good8=$e8 (want 0), good11=$e11 (want 0), bad11=$eb (want >=6), mixed=$em (want >=1)" -ForegroundColor Red
     exit 1
 }
 
