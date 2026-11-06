@@ -86,6 +86,7 @@ foreach ($s in $scenarios) {
                 }) -join "`n"
                 $clean = $clean.Trim()
                 if ($attempt -gt 1) { [void]$log.AppendLine("(retried after exit $exit)") }
+                New-Item -ItemType Directory -Force (Split-Path -Parent $outFile) | Out-Null
                 [void]$log.AppendLine('')
                 [void]$log.AppendLine("## Assistant turn $t (exit $exit)")
                 [void]$log.AppendLine('')
@@ -150,5 +151,6 @@ foreach ($s in $scenarios) {
     }
 }
 
+New-Item -ItemType Directory -Force $resultsDir | Out-Null
 [IO.File]::WriteAllText((Join-Path $resultsDir 'SUMMARY.md'), $summary.ToString(), $utf8)
 Write-Host "summary: $resultsDir\SUMMARY.md"
